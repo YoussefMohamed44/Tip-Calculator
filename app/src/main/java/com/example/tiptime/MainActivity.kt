@@ -56,17 +56,21 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.tiptime.ui.theme.TipTimeTheme
 import java.text.NumberFormat
+import androidx.compose.material3.Button
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         setContent {
-            TipTimeTheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                ) {
-                    TipTimeLayout()
+            var darkMode by remember { mutableStateOf(false) }
+
+            TipTimeTheme(darkTheme = darkMode) {
+                Surface(modifier = Modifier.fillMaxSize()) {
+                    TipTimeLayout(
+                        darkMode = darkMode,
+                        onDarkModeChange = { darkMode = it }
+                    )
                 }
             }
         }
@@ -74,7 +78,8 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun TipTimeLayout() {
+fun TipTimeLayout(  darkMode: Boolean = false,
+                    onDarkModeChange: (Boolean) -> Unit = {}) {
     var amountInput by remember { mutableStateOf("") }
     var tipInput by remember { mutableStateOf("") }
     var roundUp by remember { mutableStateOf(false) }
@@ -120,15 +125,42 @@ fun TipTimeLayout() {
             onValueChanged = { tipInput = it },
             modifier = Modifier.padding(bottom = 32.dp).fillMaxWidth(),
         )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            listOf(10, 15, 20).forEach { percent ->
+                Button(onClick = { tipInput = percent.toString() }) {
+                    Text("$percent%")
+                }
+            }
+        }
         RoundTheTipRow(
             roundUp = roundUp,
             onRoundUpChanged = { roundUp = it },
+            modifier = Modifier.padding(bottom = 32.dp)
+        )
+        DarkModeRow(
+            darkMode = darkMode,
+            onDarkModeChange = onDarkModeChange,
             modifier = Modifier.padding(bottom = 32.dp)
         )
         Text(
             text = stringResource(R.string.tip_amount, tip),
             style = MaterialTheme.typography.displaySmall
         )
+        Button(
+            onClick = {
+                amountInput = ""
+                tipInput = ""
+                roundUp = false
+            },
+            modifier = Modifier.padding(top = 16.dp)
+        ) {
+            Text("Clear")
+        }
         Spacer(modifier = Modifier.height(150.dp))
     }
 }
@@ -142,15 +174,28 @@ fun EditNumberField(
     onValueChanged: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    TextField(
-        value = value,
-        singleLine = true,
-        leadingIcon = { Icon(painter = painterResource(id = leadingIcon), null) },
-        modifier = modifier,
-        onValueChange = onValueChanged,
-        label = { Text(stringResource(label)) },
-        keyboardOptions = keyboardOptions
-    )
+    val isError = value.isNotEmpty() && value.toDoubleOrNull() == null
+
+    Column(modifier = modifier) {
+        TextField(
+            value = value,
+            singleLine = true,
+            leadingIcon = { Icon(painter = painterResource(id = leadingIcon), null) },
+            modifier = Modifier.fillMaxWidth(),
+            isError = isError,
+            onValueChange = onValueChanged,
+            label = { Text(stringResource(label)) },
+            keyboardOptions = keyboardOptions,
+            supportingText = {
+                if (isError) {
+                    Text(
+                        text = "Please enter a valid number",
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+            }
+        )
+    }
 }
 
 @Composable
@@ -160,16 +205,40 @@ fun RoundTheTipRow(
     modifier: Modifier = Modifier
 ) {
     Row(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier
+            .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(text = stringResource(R.string.round_up_tip))
+        Text(stringResource(R.string.round_up_tip))
         Switch(
+            checked = roundUp,
+            onCheckedChange = onRoundUpChanged,
             modifier = Modifier
                 .fillMaxWidth()
-                .wrapContentWidth(Alignment.End),
-            checked = roundUp,
-            onCheckedChange = onRoundUpChanged
+                .wrapContentWidth(Alignment.End)
+        )
+    }
+}
+
+// Add this new composable for Dark Mode
+@Composable
+fun DarkModeRow(
+    darkMode: Boolean,
+    onDarkModeChange: (Boolean) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text("Dark Mode")
+        Switch(
+            checked = darkMode,
+            onCheckedChange = onDarkModeChange,
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentWidth(Alignment.End)
         )
     }
 }
