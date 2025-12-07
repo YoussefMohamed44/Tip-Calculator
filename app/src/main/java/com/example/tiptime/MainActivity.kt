@@ -43,13 +43,12 @@ class MainActivity : AppCompatActivity() {
             calculateTip()
         }
 
-        binding.clearButton.setOnClickListener {
-            binding.billAmount.setText("")
-            binding.tipPercentage.setText("")
-            binding.roundUpSwitch.isChecked = false
-            binding.billAmountLayout.error = null
-            binding.tipPercentageLayout.error = null
-            binding.tipResult.text = "Tip Amount: $0.00"
+        binding.darkModeSwitch.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            } else {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            }
         }
     }
 
