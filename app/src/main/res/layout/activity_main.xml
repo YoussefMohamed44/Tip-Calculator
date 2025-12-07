@@ -70,17 +70,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tip_percentage_layout" />
 
-        <com.google.android.material.switchmaterial.SwitchMaterial
-            android:id="@+id/dark_mode_switch"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
-            android:checked="false"
-            android:text="Dark Mode"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/round_up_switch" />
-
         <TextView
             android:id="@+id/tip_result"
             android:layout_width="wrap_content"
@@ -90,7 +79,7 @@
             style="@style/TextAppearance.MaterialComponents.Headline4"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/dark_mode_switch" />
+            app:layout_constraintTop_toBottomOf="@id/round_up_switch" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

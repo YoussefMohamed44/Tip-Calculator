@@ -27,6 +27,7 @@ class MainActivity : AppCompatActivity() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: Editable?) {
+                validateBillAmount()
                 calculateTip()
             }
         })
@@ -35,6 +36,7 @@ class MainActivity : AppCompatActivity() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: Editable?) {
+                validateTipPercentage()
                 calculateTip()
             }
         })
@@ -43,12 +45,23 @@ class MainActivity : AppCompatActivity() {
             calculateTip()
         }
 
-        binding.darkModeSwitch.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-            } else {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-            }
+    }
+
+    private fun validateBillAmount() {
+        val text = binding.billAmount.text.toString()
+        if (text.isNotEmpty() && text.toDoubleOrNull() == null) {
+            binding.billAmountLayout.error = "Please enter a valid number"
+        } else {
+            binding.billAmountLayout.error = null
+        }
+    }
+
+    private fun validateTipPercentage() {
+        val text = binding.tipPercentage.text.toString()
+        if (text.isNotEmpty() && text.toDoubleOrNull() == null) {
+            binding.tipPercentageLayout.error = "Please enter a valid number"
+        } else {
+            binding.tipPercentageLayout.error = null
         }
     }
 
